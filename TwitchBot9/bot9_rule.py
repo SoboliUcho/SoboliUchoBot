@@ -22,17 +22,23 @@ class Rule:
         sent = False
         # timer 
         if not self.timer():
+            # print ("timer")
             return False
         # number of use
         if self.is_in_rule("number_of_use") and (self.rules["number_of_use"]>self.number_of_use and self.rules["number_of_use"] != -1):
+            # print("n of use")
             return False
         if self.is_in_rule("in_text", 0):
+            # print("in text 0")
             sent = self.message_is(message)
         if self.is_in_rule("in_text", 1):
+            # print("in text 1")
             sent = self.message_start(message)
         if self.is_in_rule("in_text", 2):
+            # print("in text 2")
             sent = self.message_contain(message)
         if self.is_in_rule("mod", True) and tags != None:
+            # print("mod")
             sent = self.is_mod(tags)
         # print("sent", sent)
         return sent
@@ -53,6 +59,8 @@ class Rule:
         return False
 
     def message_is(self, message):
+        if isinstance(message, dict):
+            message = message["message"]
         for rule in self.rules["rule"]:
             if str(message).startswith(rule) and len(message) == len(rule):
                 return True
@@ -89,7 +97,9 @@ class Rule:
         return False
     
     def type_of_message(self):
-        return self.rules["message_type"]
+        if "message_type" in self.rules:
+            return self.rules["message_type"]
+        return  "PRIVMSG"
     
     def use_function(self):
         print("function was used")
@@ -104,6 +114,7 @@ class Rules:
         self.mesage_rules = []
         self.auto_rules = []
         self.addid_rules = []
+        self.load_rules()
 
     def get_mesage_rules(self):
         # self.load_rules()
@@ -113,11 +124,11 @@ class Rules:
         return self.mesage_rules
     # def get
     def get_auto_rules(self):
-        self.load_rules()
+        # self.load_rules()
         return self.auto_rules
     
     def load_rules(self):
-        with open(self.cesta,"a+",encoding="utf-8") as file:
+        with open(self.cesta,"r",encoding="utf-8") as file:
             lines = json.load(file)
             for line in lines:
                 pravidlo = Rule(line)
@@ -129,7 +140,7 @@ class Rules:
             
     def add_mesage_rule(self, arary_of_rules:list):
         for rule in arary_of_rules:
-            print (rule)
+            # print (rule)
             self.mesage_rules.append(rule)
             self.addid_rules.append(rule)
 

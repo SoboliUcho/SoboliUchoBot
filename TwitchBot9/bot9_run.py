@@ -4,12 +4,13 @@ from bot9 import *
 # from readvedator import *
 
 from bot9_rule import *
+# from bot_runComand2 import *
 
 import multiprocessing
 
 # channel = "333_stribrnych_strikacek"
 # channel = "vedator_cz"
-# channel = "bratrhood"
+channel = "bratrhood"
 # channel = "akrej"
 # channel = "selick1"
 # channel = "akcelcz"
@@ -22,10 +23,10 @@ import multiprocessing
 # channel = "miselinacz"
 # channel = "whikarol"
 # channel = "haiset"
-channel = "soboliucho"
+# channel = "soboliucho"
 
 nickname = 'soboliuchobot'
-# join_mesage = "Ahoj HeyGuys já jsem hodný robot a byl bych rád kdybyste mi zadali nějaký složitý matematický příklad ve formátu: =1+2"
+# join_mesage = "Ahoj HeyGuys já jsem hodný robot a byl bych    rád kdybyste mi zadali nějaký složitý matematický příklad ve formátu: =1+2"
 join_mesage = "Ahoj já jsem hodný robot a právě jsem se k vám připojil HeyGuys"
 # join_mesage = ""
 # out_mesage = "Za chvíli jsem zpátky HeyGuys"
@@ -34,7 +35,7 @@ out_mesage = "Tak zase někdy HeyGuys"
 shutdown_comand = "@SoboliUchoBot vypnout"
 pravidla = "vedator.txt"
 # pravidla = "zpravyIlu.txt"
-pravidla = "zprav_pokus.txt"
+pravidla = "zprav_pokus_ar.json"
 # pravidla = "SUcomands.txt"
 tyde_url = "https://vedator.org/2024/02/odysseus-altermagnetismus-tyden-ve-vede-19-az-25-unora-2024/"
 

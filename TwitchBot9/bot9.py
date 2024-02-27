@@ -59,6 +59,7 @@ class bot(threading.Thread):
             if self.last_send + 1.5> time.time():
                 time.sleep(self.last_send + 1.5 - time.time())
                 continue
+            print (self.message_to_send)
             self.send_mesag(self.message_to_send[0])
             self.message_to_send.pop(0)
 
@@ -137,15 +138,15 @@ class bot(threading.Thread):
 
     def get_mesage(self, message):
         zprava = Zprava(self, message)
-        print(zprava)
-        print()
+        # print(zprava)
 
     def send_message(self, message):
+        print(message, "Zprava")
         if isinstance(message, list):
             for mess in message:
                 self.message_to_send.append(mess)
         else:
-            self.message_to_send.append(mess)
+            self.message_to_send.append(message)
             
         
     def send_mesag(self, message):
