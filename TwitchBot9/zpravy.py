@@ -26,13 +26,14 @@ class Zprava(threading.Thread):
             self.message = self.take_mesage(self.tags["mesage"])
         self.check_rules()
         print (self)
+        print()
     
     def __str__(self) -> str:
         tags = ", ".join([f"{key}: {value}" for key, value in self.tags.items()])
-        txt = f"""{tags}\n
-        Channel: {self.mesage['channel']}\n
-        Username: {self.mesage['username']}\n 
-        Message: {self.mesage['message']}\n 
+        txt = f"""{tags}
+        Channel: {self.mesage['channel']}
+        Username: {self.mesage['username']} 
+        Message: {self.mesage['message']} 
         Type: {self.mesage['mesage_type']}"""
         return txt
     
@@ -120,22 +121,24 @@ class Zprava(threading.Thread):
             # rule:Rule
             # print (rule, "rule")
             if rule.can_be_send_text(self.message, self.tags):
+                # print(rule)
                 self.message_send(rule)
                 rule.rule_was_use()
-                locals()[rule.use_function()]
+                if rule.use_function():
+                    locals()[rule.use_function()]
 
                 if rule.is_unique():
                     break
 
     def message_send(self, rule):
-
         message = rule.message_to_send()
         if isinstance(message, list):
+            print("list")
             for i in range(len(message)):
-                message[i] = self.edit_message(message)
+                message[i] = self.edit_message(message[i])
         else:
             message = self.edit_message(message)
-        if self.message["message"]=="=":
+        if self.message["message"][0]=="=":
             message = self.do_math()
         if rule.type_of_message() == "WHISPER":
             self.bot.send_whisper(message, self.mesage["username"], self.tags["user-id"])
@@ -143,6 +146,7 @@ class Zprava(threading.Thread):
             self.bot.send_message(message)
     
     def edit_message(self, message:str):
+        # print("mesage to send", message)
         if "@" in message and not "/@" in message:
             message = message.replace("@", "@" + self.mesage["username"] + " ")
             message = message.replace("  ", " ")
