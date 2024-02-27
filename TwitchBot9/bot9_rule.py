@@ -115,6 +115,12 @@ class Rules:
         self.auto_rules = []
         self.addid_rules = []
         self.load_rules()
+    
+    def __str__(self) -> str:
+        text = ""
+        for rule in self.mesage_rules:
+            text += str(rule) + "\n"
+        return text
 
     def get_mesage_rules(self):
         # self.load_rules()
@@ -135,6 +141,7 @@ class Rules:
                 print (pravidlo)
                 if "autosend" in line and line["autosend"]:
                     self.auto_rules.append(pravidlo)
+                self.mesage_rules.append(pravidlo)
         for rule in self.addid_rules:
             self.mesage_rules.append(rule)
             
