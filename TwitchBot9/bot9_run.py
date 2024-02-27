@@ -3,8 +3,7 @@ from login import login
 from bot9 import *
 # from readvedator import *
 
-from bot_readRules1 import *
-from bot_runComand2 import *
+from bot9_rule import *
 
 import multiprocessing
 
