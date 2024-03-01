@@ -28,4 +28,7 @@ This is repository for all my bot projects
 - obs integration
   - dispaly chat
   - change scene
-- multiple channels control 
+- multiple channels control
+
+## Contact 
+If you want more information, you can contact me on discord *soboli_ucho* or email *soboli.ucho@gmail.com*
