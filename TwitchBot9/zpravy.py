@@ -14,6 +14,7 @@ class Zprava(threading.Thread):
         super().__init__()
         self.tags = {}
         self.message = message
+        print (message)
         self.bot = bot
         self.rules = bot.rules.get_mesage_rules()
         self.start()
@@ -125,7 +126,7 @@ class Zprava(threading.Thread):
                 self.message_send(rule)
                 rule.rule_was_use()
                 if rule.use_function():
-                    locals()[rule.use_function()]
+                    locals()["self."+rule.use_function()]
 
                 if rule.is_unique():
                     break
@@ -133,7 +134,7 @@ class Zprava(threading.Thread):
     def message_send(self, rule):
         message = rule.message_to_send()
         if isinstance(message, list):
-            print("list")
+            # print("list")
             for i in range(len(message)):
                 message[i] = self.edit_message(message[i])
         else:

@@ -14,8 +14,11 @@ import threading
 
 # channels = [{"channel":"nazev", "rules":"url" "join_message":"join message", "out_message":"out message", "shutdown_comand":"shutdown_comand"}]
 
+
 class bot(threading.Thread):
-    def __init__(self, nickname, channel,  rules:Rules, join_mesage, out_message, shutdown_comand) -> None:
+    def __init__(
+        self, nickname, channel, rules: Rules, join_mesage, out_message, shutdown_comand
+    ) -> None:
         super().__init__()
         self.server = "irc.chat.twitch.tv"
         self.port = 6667
@@ -29,11 +32,24 @@ class bot(threading.Thread):
 
         self.channel = channel
         self.rules = rules
-        end_rule = Rule({"in_text":0,"rule":[shutdown_comand],"send_all":True,"messages":[self.out_message], "message_type": "PRIVMSG", "funnction": "bot.vypnout", "number_of_use": -1, "counter":0})
+        end_rule = Rule(
+            {
+                "in_text": 0,
+                "rule": [shutdown_comand],
+                "send_all": True,
+                "messages": [self.out_message],
+                "message_type": "PRIVMSG",
+                "funnction": "bot.vypnout",
+                "number_of_use": -1,
+                "counter": 0,
+            }
+        )
         self.rules.mesage_rules.append(end_rule)
-        
+        # print (self.rules)
+
         self.last_send = 0
         self.message_to_send = []
+        self.whisper_to_send = []
         self.last_send_mesage = ""
         self.stop_event = threading.Event()
         self.start()
@@ -47,19 +63,19 @@ class bot(threading.Thread):
         self.send_thread.start()
         self.read_thread.join()
         self.send_thread.join()
-    
+
     def read_chat(self):
         while not self.stop_event.is_set():
             self.read_mesage()
-    
+
     def sending_messages(self):
         while not self.stop_event.is_set():
-            if len(self.message_to_send)==0:
+            if len(self.message_to_send) == 0:
                 continue
-            if self.last_send + 1.5> time.time():
+            if self.last_send + 1.5 > time.time():
                 time.sleep(self.last_send + 1.5 - time.time())
                 continue
-            print (self.message_to_send)
+            # print (self.message_to_send)
             self.send_mesag(self.message_to_send[0])
             self.message_to_send.pop(0)
 
@@ -99,8 +115,21 @@ class bot(threading.Thread):
     def conect_to_api(self):
         pass
 
-    def send_api_request(self, type, data):
-        pass
+    def send_api_request(self, type_of_request, params, data):
+            url = "https://api.twitch.tv/helix/" + type_of_request
+            login = {
+                "Client-Id": self.login.client_id,
+                "Authorization": f"Bearer {self.login.access_token}",
+            }
+            # encoded_data = json.dumps(data, ensure_ascii=False).encode('utf-8') 
+            request = requests.post(
+                url, params=params, headers=login, data=data
+            )
+            if request.status_code == 204:
+                print("sent whisper")
+            else:
+                print(request.text)
+            return request.status_code
 
     def read_mesage(self):
         """
@@ -141,14 +170,23 @@ class bot(threading.Thread):
         # print(zprava)
 
     def send_message(self, message):
-        print(message, "Zprava")
+        # print(message, "Zprava")
         if isinstance(message, list):
             for mess in message:
                 self.message_to_send.append(mess)
         else:
             self.message_to_send.append(message)
-            
-        
+
+    def send_whisper(self, message, user_name, user_id):
+        """odešle zprávu pomoci WHISPER, můžete šeptat maximálně 40 unikátním příjemcům za den"""
+        # Můžete šeptat maximálně 40 unikátním příjemcům za den.
+        params = {"from_user_id": self.id, "to_user_id": user_id}
+        if isinstance( message, list):
+            for mess in message:
+                response = self.send_api_request("whispers", params, {"message": mess})
+        else:
+            self.send_api_request("whispers", params, {"message": message})
+
     def send_mesag(self, message):
         """
         odeslání zprávy do kanálu, pokud zpráva odpovídá uživateli obsahuje @ tak oznaží posledního pisatele,
@@ -165,28 +203,7 @@ class bot(threading.Thread):
         print("send")
 
     def send_wisp_mesag(self, message, user=None):
-        """odešle zprávu pomoci WHISPER, můžete šeptat maximálně 40 unikátním příjemcům za den"""
-        # Můžete šeptat maximálně 40 unikátním příjemcům za den.
-        url = "https://api.twitch.tv/helix/whispers"
-        if user == None and "user-id" in self.tags:
-            user_id = self.tags["user-id"]
-        elif user != None:
-            user_id = self.login.get_user_id(user)
-        else:
-            user_id = self.login.get_user_id(self.mesage["username"])
-        params = {"from_user_id": self.id, "to_user_id": user_id}
-        login = {
-            "Client-Id": self.login.client_id,
-            "Authorization": f"Bearer {self.login.access_token}",
-        }
-        request = requests.post(
-            url, params=params, headers=login, data={"message": message}
-        )
-        if request.status_code == 204:
-            print("sent whisper")
-        else:
-            print(request.text)
-
+        pass
     def reconnect(self):
 
         self.send_mesag("/disconnect", self.channel)
