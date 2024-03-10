@@ -32,3 +32,4 @@ This is repository for all my bot projects
 
 ## Contact 
 If you want more information, you can contact me on discord *soboli_ucho* or email *soboli.ucho@gmail.com*
+
